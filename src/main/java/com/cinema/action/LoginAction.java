@@ -36,13 +36,9 @@ public class LoginAction extends BaseAction {
 			results = {
 					@Result(name = "success", location = "login.jsp"),
 					@Result(name = "admin", type = "redirect",
-							params = {
-									"location", "admin/users"
-							}),
+							params = { "location", "admin/users" }),
 					@Result(name = "normal", type = "redirect",
-							params = {
-									"location", "index"
-							})
+							params = { "location", "index" })
 			}
 	)
 	public String index() {
@@ -70,15 +66,7 @@ public class LoginAction extends BaseAction {
 
 	@Action(value = "/login/verify",
 			results = {
-					@Result(name = "admin", type = "redirect",
-							params = {
-									"location", "admin/users"
-							}),
-					@Result(name = "normal", type = "redirect",
-							params = {
-									"location", "index"
-							}),
-					@Result(name = "error", type = "json", params = {"root", "jsonResponse"})
+					@Result(name = "json", type = "json", params = {"root", "jsonResponse"})
 			}
 	)
 	public String login() {
@@ -87,14 +75,20 @@ public class LoginAction extends BaseAction {
 		if (has == null) {
 			jsonResponse.put("ret", JsonResult.FAIL);
 			jsonResponse.put("error", "用户不存在");
-			return ERROR;
+			return "json";
 		} else if ( !has.getPassword().equals(user.getPassword()) ) {
 			jsonResponse.put("ret", JsonResult.FAIL);
 			jsonResponse.put("error", "密码填写错误");
-			return ERROR;
+		} else {
+			LoginHelper.login(request, response, has, rememberMe == 1);
+			jsonResponse.put("ret", JsonResult.OK);
+			if (has.isAdmin()) {
+				jsonResponse.put("url", request.getContextPath() + "/admin/users");
+			} else {
+				jsonResponse.put("url", request.getContextPath() + "/login");
+			}
 		}
-		LoginHelper.login(request, response, has, rememberMe == 1);
-		return dispatchUser(has);
+		return "json";
 	}
 
 	@Action(value = "/logout",

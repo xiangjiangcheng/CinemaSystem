@@ -37,4 +37,9 @@ public class LoginHelper {
 			response.addCookie(rememberCookie);
 		}
 	}
+
+	public static String dispatchUser(User user) {
+		if (user.isAdmin()) return "admin";
+		else                return "normal";
+	}
 }

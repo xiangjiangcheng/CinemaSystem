@@ -44,14 +44,16 @@ public class RegisterAction extends BaseAction {
 
 	@Action(value = "/register/post",
 			results = {
-					@Result(name = "success", type = "redirect",
-							params = {
-									"location", "login"
-							}),
-					@Result(name = "error", type = "json")
+					@Result(name = "json", type = "json", params = {"root", "jsonResponse"})
 			}
 	)
 	public String regsiter() {
+		User has = userDao.findByUsername(username);
+		if (has != null) {
+			jsonResponse.put("ret", JsonResult.FAIL);
+			jsonResponse.put("error", "该用户名已被注册");
+			return "json";
+		}
 		User user = new User();
 		user.setUsername(username);
 		user.setPassword(password);
@@ -62,7 +64,9 @@ public class RegisterAction extends BaseAction {
 		user.setRegisterTime(LocalDateTime.now());
 		userDao.create(user);
 		LoginHelper.login(request, response, user, false);
-		return SUCCESS;
+		jsonResponse.put("ret", JsonResult.OK);
+		jsonResponse.put("url", request.getContextPath() + "/");
+		return "json";
 	}
 
 	public void setUsername(String username) {

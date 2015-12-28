@@ -6,6 +6,19 @@
 
 <body>
 <%@ include file="../templates/navbar.jsp" %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <table id="userTable">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <%@ include file="../templates/footer.jsp"%>
 </body>
 </html>
