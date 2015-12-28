@@ -6,6 +6,7 @@ import org.joda.time.LocalDate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,8 +42,7 @@ public class Film implements Serializable {
 	private int length;
 
 	@Column(name = "premiere_date")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-	private LocalDate premiereDate;
+	private Date premiereDate;
 
 	@Column
 	private String actors;
@@ -66,14 +66,6 @@ public class Film implements Serializable {
 	@OrderBy("start_time asc")
 	private Set<CinemaSale> sales = new TreeSet<CinemaSale>();
 
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(
-			name = "film_film_type",
-			joinColumns = {@JoinColumn(name = "film_id")},
-			inverseJoinColumns = {@JoinColumn(name = "film_type_id")}
-	)
-	private Set<FilmType> types = new TreeSet<FilmType>();
 
 	public long getId() {
 		return id;
@@ -131,11 +123,11 @@ public class Film implements Serializable {
 		this.length = length;
 	}
 
-	public LocalDate getPremiereDate() {
+	public Date getPremiereDate() {
 		return premiereDate;
 	}
 
-	public void setPremiereDate(LocalDate premiereDate) {
+	public void setPremiereDate(Date premiereDate) {
 		this.premiereDate = premiereDate;
 	}
 
@@ -163,11 +155,4 @@ public class Film implements Serializable {
 		this.sales = sales;
 	}
 
-	public Set<FilmType> getTypes() {
-		return types;
-	}
-
-	public void setTypes(Set<FilmType> types) {
-		this.types = types;
-	}
 }

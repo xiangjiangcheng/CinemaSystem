@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.Cookie;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * LoginAction
@@ -51,7 +53,13 @@ public class LoginAction extends BaseAction {
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("user")) {
-					user = userDao.findByUsername(cookie.getValue());
+					String username = "";
+					try {
+						username = URLDecoder.decode(cookie.getValue(), "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					user = userDao.findByUsername(username);
 					if (user != null) {
 						session.setAttribute(LoginHelper.USER_SESSION, user);
 						return dispatchUser(user);
@@ -80,12 +88,16 @@ public class LoginAction extends BaseAction {
 			jsonResponse.put("ret", JsonResult.FAIL);
 			jsonResponse.put("error", "密码填写错误");
 		} else {
-			LoginHelper.login(request, response, has, rememberMe == 1);
-			jsonResponse.put("ret", JsonResult.OK);
-			if (has.isAdmin()) {
-				jsonResponse.put("url", request.getContextPath() + "/admin/users");
-			} else {
-				jsonResponse.put("url", request.getContextPath() + "/login");
+			try {
+				LoginHelper.login(request, response, has, rememberMe == 1);
+				jsonResponse.put("ret", JsonResult.OK);
+				if (has.isAdmin()) {
+					jsonResponse.put("url", request.getContextPath() + "/admin/users");
+				} else {
+					jsonResponse.put("url", request.getContextPath() + "/login");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return "json";
@@ -97,7 +109,11 @@ public class LoginAction extends BaseAction {
 			}
 	)
 	public String destroy() {
-		LoginHelper.logout(request, response);
+		try {
+			LoginHelper.logout(request, response);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return SUCCESS;
 	}
 

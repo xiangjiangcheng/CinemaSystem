@@ -65,9 +65,13 @@ public class RegisterAction extends BaseAction {
 		user.setAdmin(true);
 		user.setRegisterTime(new Date());
 		userDao.create(user);
-		LoginHelper.login(request, response, user, false);
-		jsonResponse.put("ret", JsonResult.OK);
-		jsonResponse.put("url", request.getContextPath() + "/");
+		try {
+			LoginHelper.login(request, response, user, false);
+			jsonResponse.put("ret", JsonResult.OK);
+			jsonResponse.put("url", request.getContextPath() + "/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "json";
 	}
 

@@ -91,7 +91,6 @@
 <script>
     var $alertRow = $('#alert-row');
     var $alertMsg = $('#alert-msg');
-
     function generate_item(user) {
         var ret = "<tr id='user" + user.id + "'>";
         ret += "<td><label><input type='radio' name='user' value='" + user.id + "'></label></td>";
@@ -152,7 +151,6 @@
             $next.hide();
         });
     }
-
     function delete_item(url, checked) {
         var data = { 'id': checked };
         $.post(url, data).success(function (response) {

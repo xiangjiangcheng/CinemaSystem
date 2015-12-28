@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.Cookie;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * IndexAction
@@ -44,7 +46,13 @@ public class IndexAction extends BaseAction {
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equals("user")) {
-						user = userDao.findByUsername(cookie.getValue());
+						String username = "";
+						try {
+							username = URLDecoder.decode(cookie.getValue(), "UTF-8");
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						}
+						user = userDao.findByUsername(username);
 						if (user != null) {
 							session.setAttribute(LoginHelper.USER_SESSION, user);
 							return LoginHelper.dispatchUser(user);

@@ -18,6 +18,7 @@
           <c:choose>
             <c:when test="${sessionScope.current_user.admin}">
               <li><a href="<%=basePath%>/admin/users">用户管理</a></li>
+              <li><a href="<%=basePath%>/admin/films">影片管理</a></li>
             </c:when>
             <c:otherwise>
               <li><a href="<%=basePath%>/index">首页 <span class="sr-only">(current)</span></a></li>
