@@ -2,6 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="../templates/header.jsp"%>
 <link rel="stylesheet" href="<c:url value='/static/styles/common.css' />" />
+<link rel="stylesheet" href="<c:url value='/static/plugin/bootstrap-tagsinput/bootstrap-tagsinput.css' />" />
+<link rel="stylesheet" href="<c:url value='/static/plugin/bootstrap-fileinput/css/fileinput.min.css' />" />
 </head>
 
 <%@ include file="../templates/navbar.jsp" %>
@@ -31,7 +33,10 @@
             <button class="btn btn-default btn-sm to_delete_item" data-toggle="modal" data-target="#delModal">
               <i class="fa fa-trash-o"></i> 删除
             </button>
-            <button class="btn btn-default btn-sm edit_item"><i class="fa fa-pencil-square-o"></i> 修改</button>
+            <button class="btn btn-default btn-sm to_edit_item" data-toggle="modal" data-target="#addModal">
+              <i class="fa fa-pencil-square-o"></i> 修改</button>
+            <button class="btn btn-default btn-sm to_add_item" data-toggle="modal" data-target="#addModal">
+                <i class="fa fa-pencil-square-o"></i> 添加</button>
             <div class="pull-right">
               <div class="btn-group">
                 <button class="btn btn-default btn-sm prev-page"><i class="fa fa-chevron-left"></i></button>
@@ -41,24 +46,10 @@
           </div>
           <table class="table table-bordered table-hover table-striped list-table">
             <thead>
-            <tr><th>选择</th><th>姓名</th><th>权限</th><th>邮箱</th><th>手机</th><th>性别</th><th>注册时间</th></tr>
+            <tr><th>选择</th><th>影名</th><th>导演</th><th>演员</th><th>语言</th><th>片长</th><th>上映日期</th></tr>
             </thead>
             <tbody class="list-table-body"></tbody>
           </table>
-        </div>
-        <div class="box-footer no-padding">
-          <div class="list-box-controls">
-            <button class="btn btn-default btn-sm to_delete_item" data-toggle="modal" data-target="#myModal">
-              <i class="fa fa-trash-o"></i> 删除
-            </button>
-            <button class="btn btn-default btn-sm edit_item"><i class="fa fa-pencil-square-o"></i> 修改</button>
-            <div class="pull-right">
-              <div class="btn-group">
-                <button class="btn btn-default btn-sm prev-page"><i class="fa fa-chevron-left"></i></button>
-                <button class="btn btn-default btn-sm next-page"><i class="fa fa-chevron-right"></i></button>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="overlay">
           <i class="fa fa-refresh fa-spin"></i>
@@ -77,7 +68,7 @@
         <h4 class="modal-title">警告</h4>
       </div>
       <div class="modal-body">
-        <p style="font-size: 1.4em;">是否确定删除当前选定用户！</p>
+        <p style="font-size: 1.4em;">是否确定删除当前选定影片！</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger btn-flat delete_item">确定删除</button>
@@ -87,21 +78,72 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加影片</h4>
+      </div>
+      <div class="modal-body">
+        <%@ include file="form/film_form.jsp" %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary add-or-edit-item">提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%@ include file="../templates/footer.jsp"%>
+<script src="<c:url value='/static/plugin/bootstrap-tagsinput/bootstrap-tagsinput.js'/>"></script>
+<script src="<c:url value='/static/plugin/bootstrap-fileinput/js/fileinput.min.js'/>"></script>
+<script src="<c:url value='/static/plugin/bootstrap-fileinput/js/fileinput_locale_zh.js'/>"></script>
 <script>
   var $alertRow = $('#alert-row');
   var $alertMsg = $('#alert-msg');
-  function generate_item(user) {
-    var ret = "<tr id='user" + user.id + "'>";
-    ret += "<td><label><input type='radio' name='user' value='" + user.id + "'></label></td>";
-    ret += "<td><b>" + user.username + "</b></td>";
-    if (user.admin) ret += "<td><label class='label label-danger'>管理员</label></td>";
-    else            ret += "<td><label class='label label-default'>用户</label></td>";
-    ret += "<td>" + user.email + "</td>";
-    ret += "<td>" + user.phone + "</td>";
-    if (user.sex)   ret += "<td>男</td>";
-    else            ret += "<td>女</td>";
-    ret += "<td>" + user.registerTime + "</td>";
+
+  var pageSize = ${pageSize};
+  var $container = $('.list-table-body');
+  var get_url = "<%=basePath%>/films/get";
+  var one_url = "<%=basePath%>/films/one";
+  var del_url = "<%=basePath%>/films/del";
+  var edit_url = "<%=basePath%>/films/edit";
+
+  $(document).ready(function() {
+    $('input[type="file"]').fileinput({
+      language: 'zh',
+      showUpload: false,
+      enctype: 'multipart/form-data',
+      allowedFileTypes: ['image'],
+      maxFileSize: 4192
+    });
+
+    $('input[name="actors"]').tagsinput({
+      tagClass: function(item) {
+        return "label bg-blue";
+      },
+      trimValue: true
+    });
+
+  });
+
+  function generate_item(film) {
+    var ret = "<tr id='film" + film.id + "'>";
+    ret += "<td><label><input type='radio' name='film' value='" + film.id + "'></label></td>";
+    ret += "<td><b>" + film.filmName + "</b></td>";
+    ret += "<td>" + film.director + "</td>";
+    ret += "<td>";
+    var actorList = film.actors.split(",");
+    for (var i = 0; i < actorList.length; ++i) {
+      ret += "<label class='label label-primary'>" + actorList[i] + "</label>";
+    }
+    ret += "</td>";
+    ret += "<td>" + film.language + "</td>";
+    ret += "<td>" + film.length + "分钟</td>";
+    ret += "<td>" + film.premiereDate + "</td>";
     ret += "</tr>";
     return ret;
   }
@@ -122,7 +164,7 @@
       var length = items.length;
       $container.empty();
       if (length == 0) {
-        $container.append('<tr><td colspan="6"><h2>无用户</h2></tr>');
+        $container.append('<tr><td colspan="7"><h2>无电影</h2></tr>');
       } else {
         for (var i = 0; i < length; ++i) {
           $container.append(generate_item(items[i]));
@@ -145,7 +187,7 @@
       }
     }).error(function() {
       $container.empty();
-      $container.append('<tr><td colspan="6"><h2>加载失败</h2></tr>');
+      $container.append('<tr><td colspan="7"><h2>加载失败</h2></tr>');
       $overlay.fadeOut(300);
       $prev.hide();
       $next.hide();
@@ -155,21 +197,65 @@
     var data = { 'id': checked };
     $.post(url, data).success(function (response) {
       $('.closeModal').click();
-      if (response.ret == 'OK') {
-        $('#user' + checked).fadeOut(1200, function(){ $(this).remove(); });
+      if (response.ret == 'ok') {
+        $('#film' + checked).fadeOut(1200, function(){ $(this).remove(); });
       } else {
         $alertMsg.html(response.error);
         $alertRow.fadeIn();
       }
     });
   }
-  $(document).ready(function() {
-    var pageSize = ${pageSize};
-    var $container = $('.list-table-body');
+  function add_or_edit_item(url, opt, id) {
+    var formData = new FormData($('#filmForm')[0]);
+    formData.append("opt", opt);
+    if (opt == "edit") {
+      formData.append("id", id);
+    }
+    $.ajax({
+      url: url,
+      type: "post",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.ret == "ok") {
+          $('#addModal').modal('hide');
+          get_list($container, get_url, 1, pageSize);
+        } else {
+          $('#response-text').html('上传失败');
+          $('#response').fadeIn();
+        }
+      },
+      error: function() {
+        $('#addModal').modal('hide');
+        $alertMsg.html("上传失败");
+        $alertRow.fadeIn();
+      }
+    });
+  }
+  function get_one(url, id) {
+    var data = { "id" : id };
+    var ret = null;
+    $.post(url, data, function(response) {
+      ret = response.item;
+    }).success(function() {
+      if (ret) {
+        for (var key in ret) {
+          var $input = $('#' + key);
+          if (key == "actors") {
+            $input.tagsinput('removeAll');
+            $input.tagsinput('add', ret[key]);
+          } else {
+            $input.val(ret[key]);
+          }
+        }
+      }
+    });
+  }
 
-    var check_id = 'input[name="user"]:checked';
-    var get_url = "<%=basePath%>/users/get";
-    var del_url = "<%=basePath%>/users/del";
+  $(document).ready(function() {
+
+    var check_id = 'input[name="film"]:checked';
     get_list($container, get_url, 1, pageSize);
 
     $('button.to_refresh').click(function() {
@@ -197,6 +283,33 @@
       var check = $(check_id).val();
       delete_item(del_url, check);
     });
+
+    $('.to_add_item').click(function() {
+      $('.add-or-edit-item').data("opt", "add");
+    });
+
+    $('.to_edit_item').click(function() {
+      var $check = $(check_id);
+      if ($check.length <= 0) {
+        return false;
+      }
+      var id = $check.val();
+      get_one(one_url, id);
+      $('.add-or-edit-item').data("opt", "edit").data("id", id);
+    });
+
+    $('.add-or-edit-item').click(function() {
+      var pwd1 = $('#inputPassword').val();
+      var pwd2 = $('#inputPassword2').val();
+      if (pwd1 != pwd2) {
+        $('#response-text').html("两次密码输入不统一");
+        $('#response').fadeIn();
+        return false;
+      }
+      add_or_edit_item(edit_url, $(this).data("opt"), $(this).data("id"));
+      return false;
+    });
+
 
   });
 </script>

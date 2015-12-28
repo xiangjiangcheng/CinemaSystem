@@ -6,7 +6,6 @@ import com.cinema.model.User;
 import com.cinema.util.LoginHelper;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -44,12 +43,8 @@ public class RegisterAction extends BaseAction {
 		return INPUT;
 	}
 
-	@Action(value = "/register/post",
-			results = {
-					@Result(name = "json", type = "json", params = {"root", "jsonResponse"})
-			}
-	)
-	public String regsiter() {
+	@Action(value = "/register/post")
+	public String register() {
 		User has = userDao.findByUsername(username);
 		if (has != null) {
 			jsonResponse.put("ret", JsonResult.FAIL);

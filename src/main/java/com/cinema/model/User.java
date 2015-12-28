@@ -76,6 +76,7 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
+	@JSON(serialize = false)
 	public String getPassword() {
 		return password;
 	}

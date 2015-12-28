@@ -1,10 +1,6 @@
 package com.cinema.action.base;
 
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -13,7 +9,8 @@ import org.apache.struts2.json.annotations.JSON;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BaseAction
@@ -45,20 +42,5 @@ public class BaseAction extends ActionSupport {
 		return jsonResponse;
 	}
 
-	public void parseMultiPartForm() {
-		DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-		ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
-		servletFileUpload.setHeaderEncoding("UTF-8");
-		List<FileItem> items = new ArrayList<FileItem>();
-		try {
-			items = servletFileUpload.parseRequest(request);
-		} catch (FileUploadException e) {
-			e.printStackTrace();
-		}
-		Map params = new HashMap();
-		for (FileItem item : items) {
-
-		}
-	}
 
 }

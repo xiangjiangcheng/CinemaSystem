@@ -1,11 +1,9 @@
 package com.cinema.model;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.apache.struts2.json.annotations.JSON;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
@@ -32,8 +30,8 @@ public class Film implements Serializable {
 	@Column
 	private String director;
 
-	@Column(length = 4096)
-	private String intro;
+	@Column
+	private String actors;
 
 	@Column
 	private String language;
@@ -44,8 +42,9 @@ public class Film implements Serializable {
 	@Column(name = "premiere_date")
 	private Date premiereDate;
 
-	@Column
-	private String actors;
+	@Column(length = 4096)
+	private String intro;
+
 
 	@OneToMany(
 			mappedBy = "film",
@@ -75,6 +74,7 @@ public class Film implements Serializable {
 		this.id = id;
 	}
 
+	@JSON(serialize = false)
 	public byte[] getPoster() {
 		return poster;
 	}
@@ -123,6 +123,7 @@ public class Film implements Serializable {
 		this.length = length;
 	}
 
+	@JSON(format = "yyyy-MM-dd")
 	public Date getPremiereDate() {
 		return premiereDate;
 	}
@@ -139,6 +140,7 @@ public class Film implements Serializable {
 		this.actors = actors;
 	}
 
+	@JSON(serialize = false)
 	public Set<Comment> getComments() {
 		return comments;
 	}
@@ -147,6 +149,7 @@ public class Film implements Serializable {
 		this.comments = comments;
 	}
 
+	@JSON(serialize = false)
 	public Set<CinemaSale> getSales() {
 		return sales;
 	}
