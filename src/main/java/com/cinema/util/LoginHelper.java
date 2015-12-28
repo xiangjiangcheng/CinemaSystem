@@ -42,4 +42,8 @@ public class LoginHelper {
 		if (user.isAdmin()) return "admin";
 		else                return "normal";
 	}
+
+	public static User getCurrentUser(HttpSession session) {
+		return (User) session.getAttribute(USER_SESSION);
+	}
 }
