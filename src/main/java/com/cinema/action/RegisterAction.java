@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import java.util.Date;
+
 
 /**
  * RegisterAction
@@ -60,8 +62,8 @@ public class RegisterAction extends BaseAction {
 		user.setEmail(email);
 		user.setPhone(phone);
 		user.setSex(sex == 1);
-		user.setAdmin(false);
-		user.setRegisterTime(LocalDateTime.now());
+		user.setAdmin(true);
+		user.setRegisterTime(new Date());
 		userDao.create(user);
 		LoginHelper.login(request, response, user, false);
 		jsonResponse.put("ret", JsonResult.OK);

@@ -1,11 +1,10 @@
 package com.cinema.model;
 
 import org.apache.struts2.json.annotations.JSON;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,8 +38,7 @@ public class User implements Serializable {
 	private String phone;
 
 	@Column(name = "reg_time")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-	private LocalDateTime registerTime;
+	private Date registerTime;
 
 
 	@OneToMany(
@@ -120,14 +118,16 @@ public class User implements Serializable {
 		this.phone = phone;
 	}
 
-	public LocalDateTime getRegisterTime() {
+	@JSON(format = "yyyy-MM-dd HH:mm:ss")
+	public Date getRegisterTime() {
 		return registerTime;
 	}
 
-	public void setRegisterTime(LocalDateTime registerTime) {
+	public void setRegisterTime(Date registerTime) {
 		this.registerTime = registerTime;
 	}
 
+	@JSON(serialize = false)
 	public Set<Comment> getComments() {
 		return comments;
 	}
@@ -136,6 +136,7 @@ public class User implements Serializable {
 		this.comments = comments;
 	}
 
+	@JSON(serialize = false)
 	public Set<Order> getOrders() {
 		return orders;
 	}
