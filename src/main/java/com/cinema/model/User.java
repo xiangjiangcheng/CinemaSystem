@@ -1,5 +1,6 @@
 package com.cinema.model;
 
+import org.apache.struts2.json.annotations.JSON;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
@@ -26,10 +27,10 @@ public class User implements Serializable {
 	private String password;
 
 	@Column
-	private boolean sex;
+	private int boy;
 
 	@Column
-	private boolean admin;
+	private int admin;
 
 	@Column
 	private String email;
@@ -86,19 +87,21 @@ public class User implements Serializable {
 	}
 
 	public boolean isSex() {
-		return sex;
+		return boy == 1;
 	}
 
 	public void setSex(boolean sex) {
-		this.sex = sex;
+		if (sex)    this.boy = 1;
+		else        this.boy = 0;
 	}
 
 	public boolean isAdmin() {
-		return admin;
+		return admin == 1;
 	}
 
 	public void setAdmin(boolean admin) {
-		this.admin = admin;
+		if (admin)  this.admin = 1;
+		else        this.admin = 0;
 	}
 
 	public String getEmail() {
