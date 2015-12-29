@@ -5,6 +5,7 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 70px;
+    background-color: #ecf0f5;
 }
 body > .container {
     padding: 70px 15px 0;
@@ -14,8 +15,8 @@ body > .container {
     position: absolute;
     bottom: 0;
     width: 100%;
-    color: #cccccc;
-    background-color: #303030;
+    color: #fff;
+    background-color: #3c8dbc;
     box-shadow: 5px 5px 7px rgba(33,33,33,.7);
     /* Set the fixed height of the footer here */
     height: 62px;
@@ -23,7 +24,7 @@ body > .container {
 }
 .container .text-muted {
     margin: 20px 0;
-    color: #cccccc;
+    color: #fff;
 }
 .footer > .container {
     padding-right: 75px;
@@ -35,4 +36,19 @@ body > .container {
     .sidebar {
         display: none;
     }
+}
+
+.list-box-controls {
+    padding: 5px 10px;
+}
+
+.list-table th,
+.list-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.list-table .label {
+    display: inline-block;
+    margin-right: 2px;
 }
