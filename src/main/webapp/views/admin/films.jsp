@@ -283,7 +283,6 @@
       var check = $(check_id).val();
       delete_item(del_url, check);
     });
-
     $('.to_add_item').click(function() {
       $('.add-or-edit-item').data("opt", "add");
     });
