@@ -7,13 +7,7 @@
 
 	<display-name>CinemaSystem</display-name>
 
-	<!-- Configuration locations must consist of one or more comma- or space-delimited
-        fully-qualified @Configuration classes. Fully-qualified packages may also be
-        specified for component-scanning -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>com.cinema.config.AppConfig</param-value>
-	</context-param>
+
 
 	<!-- Configure ContextLoaderListener to use AnnotationConfigWebApplicationContext
         instead of the default XmlWebApplicationContext -->
@@ -25,10 +19,17 @@
 	</context-param>
 
 	<!-- Bootstrap the root application context as usual using ContextLoaderListener -->
+	<!-- 配置spring的核心监听器-->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>com.cinema.config.AppConfig</param-value>
+	</context-param>
+
+	<!--struts2核心过滤器-->
 	<filter>
 		<filter-name>openSessionInViewFilter</filter-name>
 		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
