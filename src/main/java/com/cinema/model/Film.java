@@ -62,7 +62,7 @@ public class Film implements Serializable {
 			orphanRemoval = true,
 			fetch = FetchType.LAZY
 	)
-	@OrderBy("start_time asc")
+	@OrderBy("startTime asc")
 	private Set<CinemaSale> sales = new TreeSet<CinemaSale>();
 
 

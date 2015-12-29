@@ -270,7 +270,6 @@
         });
 
         $('.add-or-edit-item').click(function() {
-
             add_or_edit_item(edit_url, $(this).data("opt"), $(this).data("id"));
             return false;
         });

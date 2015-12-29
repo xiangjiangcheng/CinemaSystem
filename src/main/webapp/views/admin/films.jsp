@@ -46,7 +46,8 @@
           </div>
           <table class="table table-bordered table-hover table-striped list-table">
             <thead>
-            <tr><th>选择</th><th>影名</th><th>导演</th><th>演员</th><th>语言</th><th>片长</th><th>上映日期</th></tr>
+            <tr><th>选择</th><th>影名</th><th>导演</th><th>演员</th><th>语言</th>
+              <th>片长</th><th>上映日期</th><th>详情</th></tr>
             </thead>
             <tbody class="list-table-body"></tbody>
           </table>
@@ -138,12 +139,15 @@
     ret += "<td>";
     var actorList = film.actors.split(",");
     for (var i = 0; i < actorList.length; ++i) {
-      ret += "<label class='label label-primary'>" + actorList[i] + "</label>";
+      ret += "<label class='label bg-green'>" + actorList[i] + "</label>";
     }
     ret += "</td>";
     ret += "<td>" + film.language + "</td>";
     ret += "<td>" + film.length + "分钟</td>";
     ret += "<td>" + film.premiereDate + "</td>";
+    ret += "<td><a class='btn btn-primary btn-flat btn-sm to_intro' "
+            + "href='<%=basePath%>/admin/sales?filmId=" + film.id + "'"
+            + " data-id='" + film.id + "'>放映管理</a></td>";
     ret += "</tr>";
     return ret;
   }
@@ -307,6 +311,10 @@
       }
       add_or_edit_item(edit_url, $(this).data("opt"), $(this).data("id"));
       return false;
+    });
+
+    $('.to_intro').click(function() {
+      alert($(this).data('id'));
     });
 
 

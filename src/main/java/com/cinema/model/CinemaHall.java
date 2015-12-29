@@ -1,5 +1,7 @@
 package com.cinema.model;
 
+import org.apache.struts2.json.annotations.JSON;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -27,7 +29,7 @@ public class CinemaHall implements Serializable {
 	private int columnSize;
 
 	@OneToMany(
-			mappedBy = "film",
+			mappedBy = "cinemaHall",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true,
 			fetch = FetchType.LAZY
@@ -67,6 +69,7 @@ public class CinemaHall implements Serializable {
 		this.columnSize = columnSize;
 	}
 
+	@JSON(serialize = false)
 	public Set<CinemaSale> getSales() {
 		return sales;
 	}

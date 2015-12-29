@@ -21,11 +21,11 @@ public class Seat implements Serializable {
 	@Column(name = "col_name")
 	private int colNumber;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "cinema_sale_id", nullable = false)
 	private CinemaSale cinemaSale;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE})
 	private Order order;
 
 	public long getId() {

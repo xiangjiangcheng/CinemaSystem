@@ -45,7 +45,7 @@ body > .container {
 .list-table th,
 .list-table td {
     text-align: center;
-    vertical-align: middle;
+    vertical-align: middle !important;
 }
 
 .list-table .label {
