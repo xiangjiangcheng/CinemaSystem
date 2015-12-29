@@ -31,7 +31,8 @@
                         <button class="btn btn-default btn-sm to_delete_item" data-toggle="modal" data-target="#delModal">
                             <i class="fa fa-trash-o"></i> 删除
                         </button>
-                        <button class="btn btn-default btn-sm edit_item"><i class="fa fa-pencil-square-o"></i> 修改</button>
+                        <button class="btn btn-default btn-sm to_edit_item" data-toggle="modal" data-target="#addModal">
+                            <i class="fa fa-pencil-square-o"></i> 修改</button>
                         <div class="pull-right">
                             <div class="btn-group">
                                 <button class="btn btn-default btn-sm prev-page"><i class="fa fa-chevron-left"></i></button>
@@ -45,20 +46,6 @@
                         </thead>
                         <tbody class="list-table-body"></tbody>
                     </table>
-                </div>
-                <div class="box-footer no-padding">
-                    <div class="list-box-controls">
-                        <button class="btn btn-default btn-sm to_delete_item" data-toggle="modal" data-target="#myModal">
-                            <i class="fa fa-trash-o"></i> 删除
-                        </button>
-                        <button class="btn btn-default btn-sm edit_item"><i class="fa fa-pencil-square-o"></i> 修改</button>
-                        <div class="pull-right">
-                            <div class="btn-group">
-                                <button class="btn btn-default btn-sm prev-page"><i class="fa fa-chevron-left"></i></button>
-                                <button class="btn btn-default btn-sm next-page"><i class="fa fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="overlay">
                     <i class="fa fa-refresh fa-spin"></i>
@@ -87,10 +74,39 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加影片</h4>
+            </div>
+            <div class="modal-body">
+                <%@ include file="form/user_form.jsp" %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary add-or-edit-item">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@ include file="../templates/footer.jsp"%>
 <script>
     var $alertRow = $('#alert-row');
     var $alertMsg = $('#alert-msg');
+
+    var pageSize = ${pageSize};
+    var $container = $('.list-table-body');
+
+    var check_id = 'input[name="user"]:checked';
+    var get_url = "<%=basePath%>/users/get";
+    var one_url = "<%=basePath%>/users/one";
+    var del_url = "<%=basePath%>/users/del";
+    var edit_url = "<%=basePath%>/users/edit";
+
 
     function generate_item(user) {
         var ret = "<tr id='user" + user.id + "'>";
@@ -152,12 +168,11 @@
             $next.hide();
         });
     }
-
     function delete_item(url, checked) {
         var data = { 'id': checked };
         $.post(url, data).success(function (response) {
             $('.closeModal').click();
-            if (response.ret == 'OK') {
+            if (response.ret == 'ok') {
                 $('#user' + checked).fadeOut(1200, function(){ $(this).remove(); });
             } else {
                 $alertMsg.html(response.error);
@@ -165,13 +180,57 @@
             }
         });
     }
-    $(document).ready(function() {
-        var pageSize = ${pageSize};
-        var $container = $('.list-table-body');
+    function add_or_edit_item(url, opt, id) {
+        var formData = new FormData($('#filmForm')[0]);
+        formData.append("opt", opt);
+        if (opt == "edit") {
+            formData.append("id", id);
+        }
+        $.ajax({
+            url: url,
+            type: "post",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                var $response = $('#response');
+                if (response.ret == "ok") {
+                    $('#addModal').modal('hide');
+                    get_list($container, get_url, 1, pageSize);
+                } else {
+                    $('#response-text').html('上传失败');
+                    $response.fadeIn();
+                }
+            },
+            error: function() {
+                $('#addModal').modal('hide');
+                $alertMsg.html("上传失败");
+                $alertRow.fadeIn();
+            }
+        });
+    }
+    function get_one(url, id) {
+        var data = { "id" : id };
+        var ret = null;
+        $.post(url, data, function(response) {
+            ret = response.item;
+        }).success(function() {
+            if (ret) {
+                for (var key in ret) {
+                    var $input = $('#' + key);
+                    if (key == "actors") {
+                        $input.tagsinput('removeAll');
+                        $input.tagsinput('add', ret[key]);
+                    } else {
+                        $input.val(ret[key]);
+                    }
+                }
+            }
+        });
+    }
 
-        var check_id = 'input[name="user"]:checked';
-        var get_url = "<%=basePath%>/users/get";
-        var del_url = "<%=basePath%>/users/del";
+    $(document).ready(function() {
+
         get_list($container, get_url, 1, pageSize);
 
         $('button.to_refresh').click(function() {
@@ -198,6 +257,22 @@
         $('.delete_item').click(function () {
             var check = $(check_id).val();
             delete_item(del_url, check);
+        });
+
+        $('.to_edit_item').click(function() {
+            var $check = $(check_id);
+            if ($check.length <= 0) {
+                return false;
+            }
+            var id = $check.val();
+            get_one(one_url, id);
+            $('.add-or-edit-item').data("opt", "edit").data("id", id);
+        });
+
+        $('.add-or-edit-item').click(function() {
+
+            add_or_edit_item(edit_url, $(this).data("opt"), $(this).data("id"));
+            return false;
         });
 
     });
